@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: homecentre
+  labels:
+    name: homecentre
+    project: recommendation-system
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: recommendation-api
+  namespace: homecentre
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/homecentre-dev-api-service-role
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: batch-worker
+  namespace: homecentre
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/homecentre-dev-airflow-role
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redis-config
+  namespace: homecentre
+type: Opaque
+data:
+  # Base64 encoded Redis connection URL
+  # redis://homecentre-dev-redis.cache.amazonaws.com:6379
+  url: cmVkaXM6Ly9ob21lY2VudHJlLWRldi1yZWRpcy5jYWNoZS5hbWF6b25hd3MuY29tOjYzNzk=
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: homecentre
+data:
+  MODEL_BUCKET: "homecentre-dev-ml-artifacts"
+  KINESIS_STREAM: "homecentre-dev-events"
+  AWS_DEFAULT_REGION: "us-east-1"
+  CACHE_TTL: "3600"
+  LOG_LEVEL: "INFO"
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: homecentre
+  name: recommendation-api-role
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: recommendation-api-binding
+  namespace: homecentre
+subjects:
+- kind: ServiceAccount
+  name: recommendation-api
+  namespace: homecentre
+roleRef:
+  kind: Role
+  name: recommendation-api-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: homecentre
+  name: batch-worker-role
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "list"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "create", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: batch-worker-binding
+  namespace: homecentre
+subjects:
+- kind: ServiceAccount
+  name: batch-worker
+  namespace: homecentre
+roleRef:
+  kind: Role
+  name: batch-worker-role
+  apiGroup: rbac.authorization.k8s.io

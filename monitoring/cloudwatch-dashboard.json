@@ -1,0 +1,297 @@
+{
+  "widgets": [
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 0,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/ApplicationELB", "RequestCount", "LoadBalancer", "homecentre-dev-alb"],
+          [".", "TargetResponseTime", ".", "."],
+          [".", "HTTPCode_Target_2XX_Count", ".", "."],
+          [".", "HTTPCode_Target_4XX_Count", ".", "."],
+          [".", "HTTPCode_Target_5XX_Count", ".", "."]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "API Load Balancer Metrics",
+        "period": 300,
+        "stat": "Sum",
+        "yAxis": {
+          "left": {
+            "min": 0
+          }
+        }
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 0,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/EKS", "cluster_node_count", "ClusterName", "homecentre-dev-eks"],
+          [".", "cluster_ready_node_count", ".", "."],
+          [".", "cluster_failed_node_count", ".", "."]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "EKS Cluster Health",
+        "period": 300,
+        "stat": "Average"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 6,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/Kinesis", "IncomingRecords", "StreamName", "homecentre-dev-events"],
+          [".", "OutgoingRecords", ".", "."],
+          [".", "WriteProvisionedThroughputExceeded", ".", "."],
+          [".", "ReadProvisionedThroughputExceeded", ".", "."]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Kinesis Stream Metrics",
+        "period": 300,
+        "stat": "Sum"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 8,
+      "y": 6,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/ElastiCache", "CPUUtilization", "CacheClusterId", "homecentre-dev-redis-001"],
+          [".", "DatabaseMemoryUsagePercentage", ".", "."],
+          [".", "NetworkBytesIn", ".", "."],
+          [".", "NetworkBytesOut", ".", "."],
+          [".", "CacheHits", ".", "."],
+          [".", "CacheMisses", ".", "."]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Redis Cache Metrics",
+        "period": 300,
+        "stat": "Average"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 16,
+      "y": 6,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "homecentre-dev-postgres"],
+          [".", "DatabaseConnections", ".", "."],
+          [".", "FreeableMemory", ".", "."],
+          [".", "ReadLatency", ".", "."],
+          [".", "WriteLatency", ".", "."]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "RDS PostgreSQL Metrics",
+        "period": 300,
+        "stat": "Average"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 12,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/DynamoDB", "ConsumedReadCapacityUnits", "TableName", "homecentre-dev-user-profiles"],
+          [".", "ConsumedWriteCapacityUnits", ".", "."],
+          [".", "SuccessfulRequestLatency", ".", ".", "Operation", "GetItem"],
+          [".", "SuccessfulRequestLatency", ".", ".", ".", "PutItem"],
+          [".", "UserErrors", ".", "."],
+          [".", "SystemErrors", ".", "."]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "DynamoDB User Profiles Table",
+        "period": 300,
+        "stat": "Sum"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 12,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/DynamoDB", "ConsumedReadCapacityUnits", "TableName", "homecentre-dev-real-time-recommendations"],
+          [".", "ConsumedWriteCapacityUnits", ".", "."],
+          [".", "SuccessfulRequestLatency", ".", ".", "Operation", "Query"],
+          [".", "SuccessfulRequestLatency", ".", ".", ".", "PutItem"]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "DynamoDB Recommendations Table",
+        "period": 300,
+        "stat": "Sum"
+      }
+    },
+    {
+      "type": "log",
+      "x": 0,
+      "y": 18,
+      "width": 24,
+      "height": 6,
+      "properties": {
+        "query": "SOURCE '/aws/homecentre/dev/app'\n| fields @timestamp, @message\n| filter @message like /ERROR/\n| sort @timestamp desc\n| limit 20",
+        "region": "us-east-1",
+        "title": "Recent Application Errors",
+        "view": "table"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 24,
+      "width": 6,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["HomeCenter/Recommendations", "API.RequestCount"],
+          [".", "API.ResponseTime"],
+          [".", "API.ErrorRate"]
+        ],
+        "view": "singleValue",
+        "region": "us-east-1",
+        "title": "API Summary",
+        "period": 300,
+        "stat": "Average"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 6,
+      "y": 24,
+      "width": 6,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["HomeCenter/Recommendations", "Model.PredictionLatency"],
+          [".", "Model.CacheHitRate"],
+          [".", "Model.LoadTime"]
+        ],
+        "view": "singleValue",
+        "region": "us-east-1",
+        "title": "Model Performance",
+        "period": 300,
+        "stat": "Average"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 24,
+      "width": 6,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["HomeCenter/Recommendations", "Events.ProcessedPerSecond"],
+          [".", "Events.ErrorRate"],
+          [".", "Events.LagTime"]
+        ],
+        "view": "singleValue",
+        "region": "us-east-1",
+        "title": "Event Processing",
+        "period": 300,
+        "stat": "Average"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 18,
+      "y": 24,
+      "width": 6,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["HomeCenter/Recommendations", "Training.JobStatus"],
+          [".", "Training.ModelAccuracy"],
+          [".", "Training.DataQuality"]
+        ],
+        "view": "singleValue",
+        "region": "us-east-1",
+        "title": "Training Pipeline",
+        "period": 300,
+        "stat": "Average"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 30,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/ECS", "CPUUtilization", "ServiceName", "recommendation-api"],
+          [".", "MemoryUtilization", ".", "."],
+          ["AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "homecentre-dev-alb"]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Application Performance",
+        "period": 300,
+        "stat": "Average",
+        "yAxis": {
+          "left": {
+            "min": 0,
+            "max": 100
+          }
+        }
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 30,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/MSK", "BytesInPerSec", "Cluster Name", "homecentre-dev-msk"],
+          [".", "BytesOutPerSec", ".", "."],
+          [".", "MessagesInPerSec", ".", "."],
+          [".", "PartitionCount", ".", "."]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Kafka Cluster Metrics",
+        "period": 300,
+        "stat": "Average"
+      }
+    }
+  ]
+}
